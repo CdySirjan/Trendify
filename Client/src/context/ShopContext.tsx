@@ -49,7 +49,7 @@ const ShopContextProvider = ({ children }: { children: ReactNode }) => {
   const [products] = useState<Product[]>(productsFromAssets); // initialize state with imported products
   const navigate = useNavigate();
 
-  const currency = "$";
+  const currency = "NRS";
   const delivery_fee = 10;
 
   // Load cart items from localStorage on mount
