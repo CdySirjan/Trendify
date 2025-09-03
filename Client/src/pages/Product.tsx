@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+// src/pages/Product.tsx
+import React, { useState, useEffect, useContext } from "react";
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
+import { ShopContext } from "../context/ShopContext";
 
-// Define types for props
-interface ProductType {
+// ------------------------
+// Type Definitions
+// ------------------------
+export interface ProductType {
   _id: string;
   name: string;
   price: number;
@@ -14,17 +18,22 @@ interface ProductType {
   subCategory: string;
 }
 
-interface ProductProps {
+export interface ProductProps {
   product: ProductType;
   currency: string;
   addToCart: (id: string, size: string) => void;
 }
 
+// ------------------------
+// Product Component
+// ------------------------
 const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
   const [image, setImage] = useState<string>(product.image[0]);
   const [size, setSize] = useState<string>("");
 
-  // Reset image when product changes
+  const shop = useContext(ShopContext);
+  const products = shop?.products ?? [];
+
   useEffect(() => {
     if (product?.image?.length > 0) {
       setImage(product.image[0]);
@@ -40,8 +49,8 @@ const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
           <div className="flex justify-between overflow-x-auto sm:flex-col sm:overflow-y-scroll sm:justify-normal sm:w-[18.7%] w-full">
             {product.image.map((item, index) => (
               <img
-                src={item}
                 key={index}
+                src={item}
                 onClick={() => setImage(item)}
                 className={`w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer ${
                   image === item ? "border-2 border-gray-600 py-2 px-2" : ""
@@ -68,7 +77,10 @@ const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
           </div>
           <p className="mt-5 text-3xl font-medium">
             {currency}
-            {product.price}
+            {product.price.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </p>
           <p className="mt-5 text-gray-500 md:w-4/5">{product.description}</p>
 
@@ -106,7 +118,7 @@ const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
         </div>
       </div>
 
-      {/* Description and Review Section */}
+      {/* Description & Review Section */}
       <div className="mt-20">
         <div className="flex">
           <b className="px-5 py-3 text-sm border">Description</b>
@@ -130,7 +142,7 @@ const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
         </div>
       </div>
 
-      {/* Display Related Products */}
+      {/* Related Products */}
       <RelatedProducts
         category={product.category}
         subCategory={product.subCategory}

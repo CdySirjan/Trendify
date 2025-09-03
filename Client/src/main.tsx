@@ -1,12 +1,18 @@
- import React from 'react'
- import { createRoot } from 'react-dom/client'
- import { BrowserRouter } from 'react-router-dom'
- import App from './App'
- import './index.css'
- createRoot(document.getElementById('root')!).render(
- <React.StrictMode>
- <BrowserRouter>
- <App />
- </BrowserRouter>
- </React.StrictMode>
- )
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import ShopContextProvider from "./context/ShopContext"; // <-- import the provider
+import { BrowserRouter } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <ShopContextProvider> 
+        <App />
+        <ToastContainer /> 
+      </ShopContextProvider>
+    </BrowserRouter>
+  </React.StrictMode>
+);
