@@ -47,8 +47,9 @@ const Footer: React.FC = () => {
         <div>
           <p className="mb-5 text-xl font-medium">GET IN TOUCH</p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li>+11-558-669-447</li>
-            <li>contact.trendify@info.com</li>
+            <li>01-5551234</li>
+            <li>9845096841</li>
+            <li>help@trendify.com</li>
           </ul>
         </div>
       </div>
