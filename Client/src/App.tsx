@@ -14,7 +14,7 @@ import Footer from './components/Footer';
 import SearchBar from './components/SearchBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import "./index.css";
 const ProductWrapper: React.FC = () => {
   // Provide placeholder values to satisfy ProductProps; replace with real fetching/context logic.
   const product = {} as any;
