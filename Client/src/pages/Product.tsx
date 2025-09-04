@@ -14,29 +14,6 @@ export interface ProductType {
   subCategory: string;
 }
 
-const dummyProducts: ProductType[] = [
-  {
-    _id: "1",
-    name: "Classic White T-Shirt",
-    price: 29.99,
-    description: "A soft cotton t-shirt with a timeless fit.",
-    image: ["/images/tshirt1.png", "/images/tshirt2.png", "/images/tshirt3.png"],
-    sizes: ["S", "M", "L", "XL"],
-    category: "Clothing",
-    subCategory: "T-Shirts",
-  },
-  {
-    _id: "2",
-    name: "Denim Jacket",
-    price: 59.99,
-    description: "A stylish denim jacket for all seasons.",
-    image: ["/images/jacket1.png", "/images/jacket2.png"],
-    sizes: ["M", "L", "XL"],
-    category: "Clothing",
-    subCategory: "Jackets",
-  },
-];
-
 const Product: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
   const [product, setProduct] = useState<ProductType | null>(null);
@@ -44,11 +21,15 @@ const Product: React.FC = () => {
   const [size, setSize] = useState<string>("");
 
   useEffect(() => {
-    const found = dummyProducts.find((item) => item._id === productId);
-    if (found) {
-      setProduct(found);
-      setImage(found.image[0]);
-    }
+    // TODO: Replace with your API call
+    // Example: fetch(`/api/products/${productId}`)
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     setProduct(data);
+    //     setImage(data.image[0]);
+    //   });
+
+    // For now, product remains null until real data is fetched
   }, [productId]);
 
   if (!product) return <div className="p-10">Product not found</div>;
