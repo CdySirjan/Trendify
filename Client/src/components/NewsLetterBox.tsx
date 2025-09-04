@@ -3,7 +3,7 @@ import React from "react";
 const NewsLetterBox: React.FC = () => {
   const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: Add newsletter subscription logic here
+    
     console.log("Subscribed!");
   };
 

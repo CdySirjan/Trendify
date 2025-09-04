@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Title from "../components/Title";
-import { assets } from "../assets/assets";
+import { assets, products } from "../assets/assets";
 import CartTotal from "../components/CartTotal";
-
-// Define types for props
-interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  image: string[];
-}
 
 interface CartItem {
   _id: string;
@@ -17,39 +9,34 @@ interface CartItem {
   quantity: number;
 }
 
-interface CartProps {
-  products: Product[];
-  currency: string;
-  cartItems: Record<string, Record<string, number>>;
-  updateQuantity: (id: string, size: string, quantity: number) => void;
-  onCheckout?: () => void;
-}
+const Cart: React.FC = () => {
+  const [cartItems, setCartItems] = useState<Record<string, Record<string, number>>>({
+    "aaaaa": { M: 2 },
+    "aaaab": { L: 1 },
+  });
 
-const Cart: React.FC<CartProps> = ({
-  products,
-  currency,
-  cartItems,
-  updateQuantity,
-  onCheckout,
-}) => {
   const [cartData, setCartData] = useState<CartItem[]>([]);
 
-  // Convert cartItems object into array
   useEffect(() => {
     const tempData: CartItem[] = [];
     for (const productId in cartItems) {
       for (const size in cartItems[productId]) {
         if (cartItems[productId][size] > 0) {
-          tempData.push({
-            _id: productId,
-            size,
-            quantity: cartItems[productId][size],
-          });
+          tempData.push({ _id: productId, size, quantity: cartItems[productId][size] });
         }
       }
     }
     setCartData(tempData);
   }, [cartItems]);
+
+  const updateQuantity = (id: string, size: string, quantity: number) => {
+    setCartItems((prev) => {
+      const updated = { ...prev };
+      if (!updated[id]) updated[id] = {};
+      updated[id][size] = quantity;
+      return updated;
+    });
+  };
 
   const isCartEmpty = cartData.length === 0;
 
@@ -58,55 +45,37 @@ const Cart: React.FC<CartProps> = ({
       <div className="mb-3 text-2xl">
         <Title text1="YOUR" text2="CART" />
       </div>
+
       <div>
         {cartData.map((item, index) => {
           const productData = products.find((p) => p._id === item._id);
           if (!productData) return null;
 
           return (
-            <div
-              key={index}
-              className="grid py-4 text-gray-700 border-t border-b grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
-            >
+            <div key={index} className="grid py-4 text-gray-700 border-t border-b grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4">
               <div className="flex items-start gap-6">
-                <img
-                  className="w-16 sm:w-20"
-                  src={productData.image[0]}
-                  alt="Product"
-                />
+                <img className="w-16 sm:w-20" src={productData.image[0]} alt={productData.name} />
                 <div>
-                  <p className="text-sm font-medium sm:text-lg">
-                    {productData.name}
-                  </p>
+                  <p className="text-sm font-medium sm:text-lg">{productData.name}</p>
                   <div className="flex items-center gap-5 mt-2">
-                    <p>
-                      {currency}&nbsp;
-                      {productData.price.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </p>
-                    <p className="px-2 border sm:px-3 sm:py-1 bg-slate-50">
-                      {item.size}
-                    </p>
+                    <p>Rs.&nbsp;{productData.price}</p>
+                    <p className="px-2 border sm:px-3 sm:py-1 bg-slate-50">{item.size}</p>
                   </div>
                 </div>
               </div>
+
               <input
                 onChange={(e) =>
                   e.target.value === "" || e.target.value === "0"
                     ? null
-                    : updateQuantity(
-                        item._id,
-                        item.size,
-                        Number(e.target.value)
-                      )
+                    : updateQuantity(item._id, item.size, Number(e.target.value))
                 }
                 className="px-1 py-1 border max-w-10 sm:max-w-20 sm:px-2"
                 type="number"
                 min={1}
                 defaultValue={item.quantity}
               />
+
               <img
                 onClick={() => updateQuantity(item._id, item.size, 0)}
                 className="w-4 mr-4 cursor-pointer sm:w-5"
@@ -117,12 +86,12 @@ const Cart: React.FC<CartProps> = ({
           );
         })}
       </div>
+
       <div className="flex justify-end my-20">
         <div className="w-full sm:w-[450px]">
           <CartTotal />
           <div className="w-full text-end">
             <button
-              onClick={onCheckout}
               className={`px-8 py-3 my-8 text-sm text-white bg-black active:bg-gray-700 ${
                 isCartEmpty ? "opacity-50 cursor-not-allowed" : ""
               }`}

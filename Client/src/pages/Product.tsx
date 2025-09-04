@@ -1,12 +1,8 @@
-// src/pages/Product.tsx
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
-import { ShopContext } from "../context/ShopContext";
 
-// ------------------------
-// Type Definitions
-// ------------------------
 export interface ProductType {
   _id: string;
   name: string;
@@ -18,33 +14,48 @@ export interface ProductType {
   subCategory: string;
 }
 
-export interface ProductProps {
-  product: ProductType;
-  currency: string;
-  addToCart: (id: string, size: string) => void;
-}
+const dummyProducts: ProductType[] = [
+  {
+    _id: "1",
+    name: "Classic White T-Shirt",
+    price: 29.99,
+    description: "A soft cotton t-shirt with a timeless fit.",
+    image: ["/images/tshirt1.png", "/images/tshirt2.png", "/images/tshirt3.png"],
+    sizes: ["S", "M", "L", "XL"],
+    category: "Clothing",
+    subCategory: "T-Shirts",
+  },
+  {
+    _id: "2",
+    name: "Denim Jacket",
+    price: 59.99,
+    description: "A stylish denim jacket for all seasons.",
+    image: ["/images/jacket1.png", "/images/jacket2.png"],
+    sizes: ["M", "L", "XL"],
+    category: "Clothing",
+    subCategory: "Jackets",
+  },
+];
 
-// ------------------------
-// Product Component
-// ------------------------
-const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
-  const [image, setImage] = useState<string>(product.image[0]);
+const Product: React.FC = () => {
+  const { productId } = useParams<{ productId: string }>();
+  const [product, setProduct] = useState<ProductType | null>(null);
+  const [image, setImage] = useState<string>("");
   const [size, setSize] = useState<string>("");
 
-  const shop = useContext(ShopContext);
-  const products = shop?.products ?? [];
-
   useEffect(() => {
-    if (product?.image?.length > 0) {
-      setImage(product.image[0]);
+    const found = dummyProducts.find((item) => item._id === productId);
+    if (found) {
+      setProduct(found);
+      setImage(found.image[0]);
     }
-  }, [product]);
+  }, [productId]);
+
+  if (!product) return <div className="p-10">Product not found</div>;
 
   return (
     <div className="pt-10 transition-opacity duration-500 ease-in border-t-2 opacity-100">
-      {/* Product Data */}
       <div className="flex flex-col gap-12 sm:gap-12 sm:flex-row">
-        {/* Product Images */}
         <div className="flex flex-col-reverse flex-1 gap-3 sm:flex-row">
           <div className="flex justify-between overflow-x-auto sm:flex-col sm:overflow-y-scroll sm:justify-normal sm:w-[18.7%] w-full">
             {product.image.map((item, index) => (
@@ -64,7 +75,6 @@ const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
           </div>
         </div>
 
-        {/* Product Info */}
         <div className="flex-1">
           <h1 className="mt-2 text-2xl font-medium">{product.name}</h1>
           <div className="flex items-center gap-1 mt-2">
@@ -75,16 +85,9 @@ const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
             <img src={assets.star_dull_icon} alt="Star Dull" className="w-3.5" />
             <p className="pl-2">(122)</p>
           </div>
-          <p className="mt-5 text-3xl font-medium">
-            {currency}
-            {product.price.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
+          <p className="mt-5 text-3xl font-medium">${product.price}</p>
           <p className="mt-5 text-gray-500 md:w-4/5">{product.description}</p>
 
-          {/* Size Selector */}
           <div className="flex flex-col gap-4 my-8">
             <p>Select Size</p>
             <div className="flex gap-2">
@@ -103,7 +106,7 @@ const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
           </div>
 
           <button
-            onClick={() => addToCart(product._id, size)}
+            onClick={() => alert(`Added ${product.name} (Size: ${size}) to cart`)}
             className="px-8 py-3 text-sm text-white bg-black active:bg-gray-700"
           >
             ADD TO CART
@@ -118,31 +121,6 @@ const Product: React.FC<ProductProps> = ({ product, currency, addToCart }) => {
         </div>
       </div>
 
-      {/* Description & Review Section */}
-      <div className="mt-20">
-        <div className="flex">
-          <b className="px-5 py-3 text-sm border">Description</b>
-          <p className="px-5 py-3 text-sm border">Reviews (122)</p>
-        </div>
-        <div className="flex flex-col gap-4 px-6 py-6 text-sm text-gray-500 border">
-          <p>
-            Elevate your style with our meticulously crafted Trendify quality
-            products. Designed with a perfect balance of elegance and
-            practicality, these Trendify quality products are made from premium
-            materials that ensure both durability and comfort.
-          </p>
-          <p>
-            Whether you're dressing up for a special occasion or adding a touch
-            of sophistication to your everyday look, the Trendify quality
-            products offer unparalleled versatility. Its timeless design,
-            coupled with a flawless fit, makes it a must-have addition to any
-            wardrobe. Don’t miss out on the chance to own a piece that combines
-            both form and function—experience the difference today.
-          </p>
-        </div>
-      </div>
-
-      {/* Related Products */}
       <RelatedProducts
         category={product.category}
         subCategory={product.subCategory}

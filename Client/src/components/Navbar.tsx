@@ -18,7 +18,7 @@ const NavBar: React.FC = () => {
                 <img src={assets.logo} className='w-36' alt="Trendify" />
             </Link>
 
-            <ul className='hidden gap-5 text-sm text-gray-700 sm:flex'>
+            <ul className='hidden gap-5 text-sm text-gray-700 sm:flex scroll-smooth'>
                 <NavLink to='/' className='flex flex-col items-center gap-1'>
                     <p>HOME</p>
                     <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />

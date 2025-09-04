@@ -1,13 +1,10 @@
 import React, { createContext, useEffect, useState, ReactNode } from "react";
-import { products as productsFromAssets } from "../assets/assets"; // rename import to avoid conflicts
+import { products as productsFromAssets } from "../assets/assets";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-// ----------------- Types -----------------
 export type CartItems = {
-  [itemId: string]: {
-    [size: string]: number;
-  };
+  [itemId: string]: { [size: string]: number };
 };
 
 export type Product = {
@@ -37,28 +34,23 @@ type ShopContextType = {
   navigate: ReturnType<typeof useNavigate>;
 };
 
-// ----------------- Context -----------------
-export const ShopContext = createContext<ShopContextType | undefined>(
-  undefined
-);
+export const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
 const ShopContextProvider = ({ children }: { children: ReactNode }) => {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState<CartItems>({});
-  const [products] = useState<Product[]>(productsFromAssets); // initialize state with imported products
+  const [products] = useState<Product[]>(productsFromAssets);
   const navigate = useNavigate();
 
   const currency = "NRS";
   const delivery_fee = 10;
 
-  // Load cart items from localStorage on mount
   useEffect(() => {
     const storedCartItems = localStorage.getItem("cartItems");
     if (storedCartItems) setCartItems(JSON.parse(storedCartItems));
   }, []);
 
-  // Save cart items to localStorage whenever cartItems changes
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -72,13 +64,11 @@ const ShopContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const cartData: CartItems = structuredClone(cartItems);
-
     if (cartData[itemId]) {
       cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
     } else {
       cartData[itemId] = { [size]: 1 };
     }
-
     setCartItems(cartData);
   };
 
