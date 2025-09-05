@@ -22,7 +22,7 @@ const Contact: React.FC = () => {
           <p className="text-xl font-semibold text-gray-600">Our Store</p>
           <p className="text-gray-500">
             Trendify 354 Fashion Lane <br />
-            Los Angeles, SC 45678, USA
+            Chitwan, Nepal
           </p>
           <p className="text-gray-500">
             Tel: (+11)-558-669-447 <br />
