@@ -1,0 +1,3 @@
+{
+  "connectionString": "mongodb+srv://testing:<testing@123>@trendify.bkzsc1z.mongodb.net/?retryWrites=true&w=majority&appName=trendify"
+}
