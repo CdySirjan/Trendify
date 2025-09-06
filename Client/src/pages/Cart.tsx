@@ -10,13 +10,11 @@ interface CartItem {
 }
 
 const Cart: React.FC = () => {
-  const [cartItems, setCartItems] = useState<Record<string, Record<string, number>>>({
-    "aaaaa": { M: 2 },
-    "aaaab": { L: 1 },
-  });
-
+  
+  const [cartItems, setCartItems] = useState<Record<string, Record<string, number>>>({});
   const [cartData, setCartData] = useState<CartItem[]>([]);
 
+  // Convert cartItems to a flat array for rendering
   useEffect(() => {
     const tempData: CartItem[] = [];
     for (const productId in cartItems) {
@@ -29,11 +27,23 @@ const Cart: React.FC = () => {
     setCartData(tempData);
   }, [cartItems]);
 
+  // Update quantity or remove item if quantity is 0
   const updateQuantity = (id: string, size: string, quantity: number) => {
     setCartItems((prev) => {
       const updated = { ...prev };
-      if (!updated[id]) updated[id] = {};
-      updated[id][size] = quantity;
+
+      if (quantity <= 0) {
+        if (updated[id]) {
+          delete updated[id][size];
+          if (Object.keys(updated[id]).length === 0) {
+            delete updated[id];
+          }
+        }
+      } else {
+        if (!updated[id]) updated[id] = {};
+        updated[id][size] = quantity;
+      }
+
       return updated;
     });
   };
@@ -52,9 +62,16 @@ const Cart: React.FC = () => {
           if (!productData) return null;
 
           return (
-            <div key={index} className="grid py-4 text-gray-700 border-t border-b grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4">
+            <div
+              key={index}
+              className="grid py-4 text-gray-700 border-t border-b grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
+            >
               <div className="flex items-start gap-6">
-                <img className="w-16 sm:w-20" src={productData.image[0]} alt={productData.name} />
+                <img
+                  className="w-16 sm:w-20"
+                  src={productData.image[0]}
+                  alt={productData.name}
+                />
                 <div>
                   <p className="text-sm font-medium sm:text-lg">{productData.name}</p>
                   <div className="flex items-center gap-5 mt-2">
@@ -66,14 +83,14 @@ const Cart: React.FC = () => {
 
               <input
                 onChange={(e) =>
-                  e.target.value === "" || e.target.value === "0"
+                  e.target.value === ""
                     ? null
                     : updateQuantity(item._id, item.size, Number(e.target.value))
                 }
                 className="px-1 py-1 border max-w-10 sm:max-w-20 sm:px-2"
                 type="number"
                 min={1}
-                defaultValue={item.quantity}
+                value={item.quantity}
               />
 
               <img
@@ -85,6 +102,10 @@ const Cart: React.FC = () => {
             </div>
           );
         })}
+
+        {isCartEmpty && (
+          <p className="text-center py-10 text-gray-500 text-lg">Your cart is empty.</p>
+        )}
       </div>
 
       <div className="flex justify-end my-20">
