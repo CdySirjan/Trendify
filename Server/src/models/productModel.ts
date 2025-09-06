@@ -1,4 +1,4 @@
-// src/models/productModel.ts
+
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IProduct extends Document {
@@ -27,7 +27,7 @@ const productSchema: Schema<IProduct> = new mongoose.Schema({
     required: true,
   },
   image: {
-    type: [String], // instead of generic Array
+    type: [String], 
     required: true,
   },
   category: {
@@ -39,7 +39,7 @@ const productSchema: Schema<IProduct> = new mongoose.Schema({
     required: true,
   },
   sizes: {
-    type: [String], // instead of generic Array
+    type: [String], 
     required: true,
   },
   bestSeller: {

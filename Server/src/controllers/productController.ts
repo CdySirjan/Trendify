@@ -1,4 +1,4 @@
-// src/controllers/productController.ts
+
 import { Request, Response } from "express";
 import { v2 as cloudinary } from "cloudinary";
 import Product, { IProduct } from "../models/productModel";

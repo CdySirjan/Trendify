@@ -1,9 +1,9 @@
-// src/middleware/adminAuth.ts
+
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 interface AdminJwtPayload extends JwtPayload {
-  admin?: string; // you can adjust if your token contains structured data
+  admin?: string; 
 }
 
 const adminAuth = async (req: Request, res: Response, next: NextFunction) => {
@@ -22,7 +22,7 @@ const adminAuth = async (req: Request, res: Response, next: NextFunction) => {
       | string
       | AdminJwtPayload;
 
-    // In your logic, you are comparing decodedToken to ADMIN_EMAIL + ADMIN_PASSWORD
+   
     if (
       decodedToken !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD
     ) {

@@ -1,4 +1,4 @@
-// src/routes/userRoute.ts
+
 import express, { Router } from "express";
 import {
   loginUser,

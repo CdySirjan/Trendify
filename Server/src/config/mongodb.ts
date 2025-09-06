@@ -1,4 +1,4 @@
-// src/config/mongodb.ts
+
 import mongoose from "mongoose";
 
 const connectDB = async (): Promise<void> => {
@@ -14,7 +14,7 @@ const connectDB = async (): Promise<void> => {
     await mongoose.connect(`${process.env.MONGODB_URI}/trendify`);
   } catch (error) {
     console.error("❌ Error connecting to MongoDB:", error);
-    process.exit(1); // Exit if DB connection fails
+    process.exit(1);
   }
 };
 
