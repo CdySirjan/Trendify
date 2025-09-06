@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { userAPI } from "../services/api";
 
 const Login: React.FC = () => {
-  const [currentState, setCurrentState] = useState<"Login" | "Sign Up">("Sign Up");
+  const [currentState, setCurrentState] = useState<"Login" | "Sign Up">("Login");
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");

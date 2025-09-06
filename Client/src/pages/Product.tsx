@@ -119,7 +119,10 @@ const Product: React.FC = () => {
             <img src={assets.star_dull_icon} alt="Star Dull" className="w-3.5" />
             <p className="pl-2">(122)</p>
           </div>
-          <p className="mt-5 text-3xl font-medium">${product.price}</p>
+          <p className="mt-5 text-3xl font-medium">{context.currency}&nbsp;{product.price.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}</p>
           <p className="mt-5 text-gray-500 md:w-4/5">{product.description}</p>
 
           <div className="flex flex-col gap-4 my-8">

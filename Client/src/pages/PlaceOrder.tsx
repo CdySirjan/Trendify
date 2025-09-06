@@ -4,9 +4,10 @@ import CartTotal from "../components/CartTotal";
 import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 import { toast } from "react-toastify";
+import ESewaPayment from "../components/ESewaPayment";
 
 const PlaceOrder: React.FC = () => {
-  const [method, setMethod] = useState<"stripe" | "razorpay" | "cod">("cod");
+  const [method, setMethod] = useState<"esewa" | "cod">("cod");
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -181,34 +182,17 @@ const PlaceOrder: React.FC = () => {
           <Title text1="PAYMENT" text2="METHODS" />
 
           <div className="flex flex-col gap-3 lg:flex-row">
-            {/* Stripe */}
+            {/* eSewa */}
             <div
-              onClick={() => setMethod("stripe")}
+              onClick={() => setMethod("esewa")}
               className="flex items-center gap-3 p-2 px-3 border cursor-pointer"
             >
               <p
                 className={`min-w-3.5 h-3.5 border rounded-full ${
-                  method === "stripe" ? "bg-green-600" : ""
+                  method === "esewa" ? "bg-green-600" : ""
                 }`}
               ></p>
-              <img className="h-5 mx-4" src={assets.stripe_logo} alt="Stripe" />
-            </div>
-
-            {/* Razorpay */}
-            <div
-              onClick={() => setMethod("razorpay")}
-              className="flex items-center gap-3 p-2 px-3 border cursor-pointer"
-            >
-              <p
-                className={`min-w-3.5 h-3.5 border rounded-full ${
-                  method === "razorpay" ? "bg-green-600" : ""
-                }`}
-              ></p>
-              <img
-                className="h-5 mx-4"
-                src={assets.razorpay_logo}
-                alt="RazorPay"
-              />
+              <img className="h-5 mx-4" src={assets.esewa_logo} alt="eSewa" />
             </div>
 
             {/* Cash on Delivery */}
@@ -228,13 +212,21 @@ const PlaceOrder: React.FC = () => {
           </div>
 
           <div className="w-full mt-8 text-end">
-            <button
-              onClick={handlePlaceOrder}
-              className="px-16 py-3 text-sm text-white bg-black active:bg-gray-800 disabled:bg-gray-400"
-              disabled={loading}
-            >
-              {loading ? "PROCESSING..." : "PLACE ORDER"}
-            </button>
+            {method === "esewa" ? (
+              <ESewaPayment 
+                amount={getCartAmount()}
+                productId={`order-${Date.now()}`}
+                productName="Cloth Shop Order"
+              />
+            ) : (
+              <button
+                onClick={handlePlaceOrder}
+                className="px-16 py-3 text-sm text-white bg-black active:bg-gray-800 disabled:bg-gray-400"
+                disabled={loading}
+              >
+                {loading ? "PROCESSING..." : "PLACE ORDER"}
+              </button>
+            )}
           </div>
         </div>
       </div>

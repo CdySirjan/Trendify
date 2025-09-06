@@ -9,6 +9,8 @@ import Cart from './pages/Cart';
 import Login from './pages/Login';
 import PlaceOrder from './pages/PlaceOrder';
 import Orders from './pages/Orders';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFailure from './pages/PaymentFailure';
 import NavBar from './components/Navbar';
 import Footer from './components/Footer';
 import SearchBar from './components/SearchBar';
@@ -47,6 +49,8 @@ const App: React.FC = () => {
         <Route path="/login" element={!isLoggedIn ? <Login /> : <Navigate to="/" />} />
         <Route path="/place-order" element={isLoggedIn ? <PlaceOrder /> : <Navigate to="/login" />} />
         <Route path="/orders" element={isLoggedIn ? <Orders /> : <Navigate to="/login" />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-failure" element={<PaymentFailure />} />
       </Routes>
 
       <Footer />
