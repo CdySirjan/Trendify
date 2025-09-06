@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
+import { ShopContext } from "../context/ShopContext";
+import { productAPI } from "../api/api";
+import { toast } from "react-toastify";
 
 export interface ProductType {
   _id: string;
@@ -19,20 +22,70 @@ const Product: React.FC = () => {
   const [product, setProduct] = useState<ProductType | null>(null);
   const [image, setImage] = useState<string>("");
   const [size, setSize] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+  
+  const context = useContext(ShopContext);
+  
+  if (!context) {
+    throw new Error("Product must be used within a ShopContextProvider");
+  }
+  
+  const { addToCart } = context;
 
   useEffect(() => {
-    // TODO: Replace with your API call
-    // Example: fetch(`/api/products/${productId}`)
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     setProduct(data);
-    //     setImage(data.image[0]);
-    //   });
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        // In a real implementation, you would call the API
+        // const response = await productAPI.getProductById(productId!);
+        // setProduct(response.data);
+        // setImage(response.data.image[0]);
+        
+        // For now, simulate API call with mock data
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Find product in assets
+        const foundProduct = context.products.find(p => p._id === productId);
+        
+        if (foundProduct) {
+          setProduct(foundProduct as ProductType);
+          setImage(foundProduct.image?.[0] || "");
+          if (foundProduct.sizes && foundProduct.sizes.length > 0) {
+            setSize(foundProduct.sizes[0]);
+          }
+        } else {
+          setError("Product not found");
+        }
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        setError("Failed to load product");
+        toast.error("Failed to load product");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (productId) {
+      fetchProduct();
+    }
+  }, [productId, context.products]);
 
-    // For now, product remains null until real data is fetched
-  }, [productId]);
-
-  if (!product) return <div className="p-10">Product not found</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-10">
+        <p className="text-gray-500">Loading product...</p>
+      </div>
+    );
+  }
+  
+  if (error || !product) {
+    return (
+      <div className="flex items-center justify-center p-10">
+        <p className="text-red-500">{error || "Product not found"}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-10 transition-opacity duration-500 ease-in border-t-2 opacity-100">
@@ -87,8 +140,16 @@ const Product: React.FC = () => {
           </div>
 
           <button
-            onClick={() => alert(`Added ${product.name} (Size: ${size}) to cart`)}
+            onClick={() => {
+              if (size) {
+                addToCart(product._id, size);
+                toast.success(`Added ${product.name} (Size: ${size}) to cart`);
+              } else {
+                toast.warning("Please select a size");
+              }
+            }}
             className="px-8 py-3 text-sm text-white bg-black active:bg-gray-700"
+            disabled={!size}
           >
             ADD TO CART
           </button>

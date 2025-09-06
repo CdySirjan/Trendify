@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState, ReactNode } from "react";
 import { products as productsFromAssets } from "../assets/assets";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { productAPI } from "../api/api";
 
 export type CartItems = {
   [itemId: string]: { [size: string]: number };
@@ -32,6 +33,7 @@ type ShopContextType = {
   updateQuantity: (itemId: string, size: string, quantity: number) => void;
   getCartAmount: () => number;
   navigate: ReturnType<typeof useNavigate>;
+  loading: boolean;
 };
 
 export const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -40,7 +42,8 @@ const ShopContextProvider = ({ children }: { children: ReactNode }) => {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState<CartItems>({});
-  const [products] = useState<Product[]>(productsFromAssets);
+  const [products, setProducts] = useState<Product[]>(productsFromAssets);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const currency = "NRS";
@@ -49,6 +52,27 @@ const ShopContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const storedCartItems = localStorage.getItem("cartItems");
     if (storedCartItems) setCartItems(JSON.parse(storedCartItems));
+  }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        // In a real implementation, uncomment this code to fetch products from API
+        // const response = await productAPI.getAllProducts();
+        // setProducts(response.data);
+        
+        // For now, we'll continue using mock data
+        setProducts(productsFromAssets);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast.error("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   useEffect(() => {
@@ -118,6 +142,7 @@ const ShopContextProvider = ({ children }: { children: ReactNode }) => {
     updateQuantity,
     getCartAmount,
     navigate,
+    loading,
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

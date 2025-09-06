@@ -1,9 +1,14 @@
 import React, { useContext, useState } from 'react';
 import { assets } from '../assets/assets';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 
-const NavBar: React.FC = () => {
+interface NavBarProps {
+    isLoggedIn: boolean;
+    onLogout: () => void;
+}
+
+const NavBar: React.FC<NavBarProps> = ({ isLoggedIn, onLogout }) => {
     const [visible, setVisible] = useState<boolean>(false);
 
     // Ensure ShopContext is not undefined
@@ -45,16 +50,18 @@ const NavBar: React.FC = () => {
                     alt="Search Products" 
                 />
                 <div className='relative group'>
-                    <Link to='/login'>
+                    <Link to={isLoggedIn ? '/profile' : '/login'}>
                         <img src={assets.profile_icon} className='w-5 cursor-pointer' alt="Your Profile" />
                     </Link>
-                    <div className='absolute right-0 hidden pt-4 group-hover:block dropdown-menu'>
-                        <div className='flex flex-col gap-2 px-5 py-3 text-gray-500 rounded w-36 bg-slate-100'>
-                            <p className='cursor-pointer hover:text-black'>Profile</p>
-                            <p className='cursor-pointer hover:text-black'>Orders</p>
-                            <p className='cursor-pointer hover:text-black'>Logout</p>
+                    {isLoggedIn && (
+                        <div className='absolute right-0 hidden pt-4 group-hover:block dropdown-menu'>
+                            <div className='flex flex-col gap-2 px-5 py-3 text-gray-500 rounded w-36 bg-slate-100'>
+                                <Link to='/profile' className='cursor-pointer hover:text-black'>Profile</Link>
+                                <Link to='/orders' className='cursor-pointer hover:text-black'>Orders</Link>
+                                <p onClick={onLogout} className='cursor-pointer hover:text-black'>Logout</p>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 <Link to='/cart' className='relative'>

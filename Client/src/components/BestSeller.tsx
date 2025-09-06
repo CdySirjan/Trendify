@@ -11,7 +11,7 @@ const BestSeller: React.FC = () => {
     throw new Error("BestSeller must be used within a ShopContextProvider");
   }
 
-  const { products } = context;
+  const { products, loading } = context;
   const [bestSeller, setBestSeller] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -28,17 +28,23 @@ const BestSeller: React.FC = () => {
           won over shoppers with their quality, style, and value.
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-6">
-        {bestSeller.map((item) => (
-          <ProductItem
-            key={item._id}
-            id={item._id}
-            image={item.image ?? []}
-            name={item.name}
-            price={item.price}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex justify-center py-10">
+          <p className="text-gray-500">Loading products...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-6">
+          {bestSeller.map((item) => (
+            <ProductItem
+              key={item._id}
+              id={item._id}
+              image={item.image ?? []}
+              name={item.name}
+              price={item.price}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

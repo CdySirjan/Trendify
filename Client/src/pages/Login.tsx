@@ -1,11 +1,39 @@
 import React, { useState, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { userAPI } from "../services/api";
 
 const Login: React.FC = () => {
   const [currentState, setCurrentState] = useState<"Login" | "Sign Up">("Sign Up");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const onSubmitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: handle form submission
+    setError("");
+    setLoading(true);
+    
+    try {
+      if (currentState === "Login") {
+        const response = await userAPI.login(email, password);
+        const { token } = response.data;
+        localStorage.setItem("token", token);
+        navigate("/");
+      } else {
+        const response = await userAPI.register(name, email, password);
+        const { token } = response.data;
+        localStorage.setItem("token", token);
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Authentication failed:", err);
+      setError(currentState === "Login" ? "Invalid email or password" : "Registration failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,6 +53,8 @@ const Login: React.FC = () => {
           type="text"
           className="w-full px-3 py-2 border border-gray-800"
           placeholder="John Doe"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           required
         />
       )}
@@ -34,6 +64,8 @@ const Login: React.FC = () => {
         type="email"
         className="w-full px-3 py-2 border border-gray-800"
         placeholder="hello@gmail.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         required
       />
 
@@ -42,8 +74,15 @@ const Login: React.FC = () => {
         type="password"
         className="w-full px-3 py-2 border border-gray-800"
         placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
         required
       />
+      
+      {/* Error message */}
+      {error && (
+        <p className="w-full text-sm text-red-600">{error}</p>
+      )}
 
       {/* Links */}
       <div className="flex justify-between w-full text-sm mt-[-8px]">
@@ -66,8 +105,14 @@ const Login: React.FC = () => {
       </div>
 
       {/* Submit button */}
-      <button className="px-8 py-2 mt-4 font-light text-white bg-black">
-        {currentState === "Login" ? "Sign In" : "Sign Up"}
+      <button 
+        className="px-8 py-2 mt-4 font-light text-white bg-black disabled:bg-gray-400"
+        disabled={loading}
+      >
+        {loading 
+          ? (currentState === "Login" ? "Signing In..." : "Signing Up...") 
+          : (currentState === "Login" ? "Sign In" : "Sign Up")
+        }
       </button>
     </form>
   );

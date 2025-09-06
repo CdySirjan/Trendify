@@ -23,9 +23,10 @@ const adminAuth = async (req: Request, res: Response, next: NextFunction) => {
       | AdminJwtPayload;
 
    
-    if (
-      decodedToken !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD
-    ) {
+    const adminEmail = process.env.ADMIN_EMAIL || '';
+    const adminPassword = process.env.ADMIN_PASSWORD || '';
+    
+    if (decodedToken !== adminEmail + adminPassword) {
       return res.status(401).json({ success: false, message: "Unauthorized!" });
     }
 

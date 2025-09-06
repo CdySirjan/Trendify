@@ -1,5 +1,6 @@
 import React, { useState, type ChangeEvent, type FormEvent } from "react";
 import { assets } from "../assets/assets";
+import { productAPI } from "../services/api";
 
 const Add: React.FC = () => {
   const [image1, setImage1] = useState<File | null>(null);
@@ -15,22 +16,59 @@ const Add: React.FC = () => {
   const [sizes, setSizes] = useState<string[]>([]);
   const [bestSeller, setBestSeller] = useState<boolean>(false);
 
-  const onSubmitHandler = (e: FormEvent) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
+
+  const onSubmitHandler = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess(false);
 
-    // 🟢 Frontend only – just logging for now
-    console.log({
-      images: [image1, image2, image3, image4],
-      name,
-      description,
-      category,
-      subCategory,
-      price,
-      sizes,
-      bestSeller,
-    });
+    // Validate form
+    if (!image1) {
+      setError("At least one image is required");
+      setLoading(false);
+      return;
+    }
 
-    resetForm();
+    if (sizes.length === 0) {
+      setError("At least one size must be selected");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Create FormData object
+      const formData = new FormData();
+      
+      // Add images
+      if (image1) formData.append('images', image1);
+      if (image2) formData.append('images', image2);
+      if (image3) formData.append('images', image3);
+      if (image4) formData.append('images', image4);
+      
+      // Add other product details
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('category', category);
+      formData.append('subCategory', subCategory);
+      formData.append('price', price);
+      formData.append('sizes', JSON.stringify(sizes));
+      formData.append('bestSeller', bestSeller.toString());
+      
+      // Send to API
+      await productAPI.addProduct(formData);
+      
+      setSuccess(true);
+      resetForm();
+    } catch (err) {
+      console.error('Error adding product:', err);
+      setError('Failed to add product. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetForm = () => {
@@ -197,18 +235,32 @@ const Add: React.FC = () => {
         </label>
       </div>
 
+      {/* Error and Success Messages */}
+      {error && (
+        <div className="w-full p-2 mt-2 text-white bg-red-500 rounded">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="w-full p-2 mt-2 text-white bg-green-500 rounded">
+          Product added successfully!
+        </div>
+      )}
+
       {/* Buttons */}
       <div className="flex flex-col w-full gap-2 sm:flex-row sm:gap-8">
         <button
           type="submit"
-          className="px-5 py-2 mt-2 text-white rounded-lg bg-slate-700"
+          className="px-5 py-2 mt-2 text-white rounded-lg bg-slate-700 disabled:bg-gray-400"
+          disabled={loading}
         >
-          Add Product
+          {loading ? "Adding Product..." : "Add Product"}
         </button>
         <button
           type="button"
-          className="px-5 py-2 mt-2 text-white rounded-lg bg-slate-700"
+          className="px-5 py-2 mt-2 text-white rounded-lg bg-slate-700 disabled:bg-gray-400"
           onClick={resetForm}
+          disabled={loading}
         >
           Reset Details
         </button>

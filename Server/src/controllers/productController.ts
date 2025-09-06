@@ -3,17 +3,12 @@ import { Request, Response } from "express";
 import { v2 as cloudinary } from "cloudinary";
 import Product, { IProduct } from "../models/productModel";
 
-// Extend Express Request to include files from Multer
-interface MulterRequest extends Request {
-  files: {
-    [fieldname: string]: Express.Multer.File[];
-  };
-}
+// Using Express.Request with files property from our type declaration
 
 // ============================
 // Add Product
 // ============================
-export const addProduct = async (req: MulterRequest, res: Response) => {
+export const addProduct = async (req: Request, res: Response) => {
   try {
     const {
       name,
@@ -25,10 +20,13 @@ export const addProduct = async (req: MulterRequest, res: Response) => {
       bestSeller,
     } = req.body;
 
-    const image1 = req.files?.image1?.[0];
-    const image2 = req.files?.image2?.[0];
-    const image3 = req.files?.image3?.[0];
-    const image4 = req.files?.image4?.[0];
+    // Type assertion to handle the files structure
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+    
+    const image1 = files?.image1?.[0];
+    const image2 = files?.image2?.[0];
+    const image3 = files?.image3?.[0];
+    const image4 = files?.image4?.[0];
 
     const productImages = [image1, image2, image3, image4].filter(
       (image): image is Express.Multer.File => image !== undefined

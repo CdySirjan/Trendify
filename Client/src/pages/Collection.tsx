@@ -9,7 +9,7 @@ const Collection: React.FC = () => {
 
   if (!context) throw new Error("Collection must be used within ShopContextProvider");
 
-  const { products, search, showSearch } = context;
+  const { products, search, showSearch, loading } = context;
 
   const [showFilter, setShowFilter] = useState<boolean>(false);
   const [filterProducts, setFilterProducts] = useState<Product[]>([]);
@@ -164,11 +164,21 @@ const Collection: React.FC = () => {
         </div>
 
         {/* Map Products */}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 gap-y-6">
-          {filterProducts.map((item) => (
-            <ProductItem key={item._id} id={item._id} name={item.name} image={item.image ?? []} price={item.price} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <p className="text-gray-500">Loading products...</p>
+          </div>
+        ) : filterProducts.length === 0 ? (
+          <div className="flex justify-center py-10">
+            <p className="text-gray-500">No products found matching your criteria.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 gap-y-6">
+            {filterProducts.map((item) => (
+              <ProductItem key={item._id} id={item._id} name={item.name} image={item.image ?? []} price={item.price} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

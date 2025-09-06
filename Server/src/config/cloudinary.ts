@@ -2,19 +2,12 @@
 import { v2 as cloudinary } from "cloudinary";
 
 const connectCloudinary = async (): Promise<void> => {
-  if (
-    !process.env.CLOUDINARY_CLOUD_NAME ||
-    !process.env.CLOUDINARY_API_KEY ||
-    !process.env.CLOUDINARY_SECRET_KEY
-  ) {
-    throw new Error("Missing Cloudinary environment variables");
+  if (!process.env.CLOUDINARY_URL) {
+    throw new Error("CLOUDINARY_URL is not defined in environment variables");
   }
 
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET_KEY,
-  });
+  // The CLOUDINARY_URL environment variable will automatically configure cloudinary
+  // Format: cloudinary://api_key:api_secret@cloud_name
 };
 
 export default connectCloudinary;

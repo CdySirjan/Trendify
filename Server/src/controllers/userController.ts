@@ -38,7 +38,7 @@ export const loginUser = async (req: Request, res: Response) => {
         .json({ success: false, message: "Invalid email or password" });
     }
 
-    const token = createToken(user._id.toString());
+    const token = createToken(user._id ? user._id.toString() : '');
     res.status(200).json({ success: true, token });
   } catch (error: any) {
     console.error("Error while logging in user:", error);
@@ -88,7 +88,7 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     const user = await newUser.save();
-    const token = createToken(user._id.toString());
+    const token = createToken(user._id ? user._id.toString() : '');
 
     res.status(201).json({ success: true, token });
   } catch (error: any) {

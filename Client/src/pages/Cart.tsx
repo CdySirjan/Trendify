@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Title from "../components/Title";
-import { assets, products } from "../assets/assets";
+import { assets } from "../assets/assets";
 import CartTotal from "../components/CartTotal";
+import { ShopContext } from "../context/ShopContext";
+import { useNavigate } from "react-router-dom";
 
 interface CartItem {
   _id: string;
@@ -10,9 +12,12 @@ interface CartItem {
 }
 
 const Cart: React.FC = () => {
+  const shopContext = useContext(ShopContext);
+  if (!shopContext) throw new Error("Cart must be used within a ShopContextProvider");
   
-  const [cartItems, setCartItems] = useState<Record<string, Record<string, number>>>({});
+  const { cartItems, updateQuantity, products } = shopContext;
   const [cartData, setCartData] = useState<CartItem[]>([]);
+  const navigate = useNavigate();
 
   // Convert cartItems to a flat array for rendering
   useEffect(() => {
@@ -26,27 +31,6 @@ const Cart: React.FC = () => {
     }
     setCartData(tempData);
   }, [cartItems]);
-
-  // Update quantity or remove item if quantity is 0
-  const updateQuantity = (id: string, size: string, quantity: number) => {
-    setCartItems((prev) => {
-      const updated = { ...prev };
-
-      if (quantity <= 0) {
-        if (updated[id]) {
-          delete updated[id][size];
-          if (Object.keys(updated[id]).length === 0) {
-            delete updated[id];
-          }
-        }
-      } else {
-        if (!updated[id]) updated[id] = {};
-        updated[id][size] = quantity;
-      }
-
-      return updated;
-    });
-  };
 
   const isCartEmpty = cartData.length === 0;
 
@@ -113,6 +97,7 @@ const Cart: React.FC = () => {
           <CartTotal />
           <div className="w-full text-end">
             <button
+              onClick={() => !isCartEmpty && navigate("/place-order")}
               className={`px-8 py-3 my-8 text-sm text-white bg-black active:bg-gray-700 ${
                 isCartEmpty ? "opacity-50 cursor-not-allowed" : ""
               }`}

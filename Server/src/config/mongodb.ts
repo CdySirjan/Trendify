@@ -7,11 +7,11 @@ const connectDB = async (): Promise<void> => {
       console.log("✅ MongoDB connected");
     });
 
-    if (!process.env.MONGODB_URI) {
-      throw new Error("MONGODB_URI is not defined in environment variables");
+    if (!process.env.MONGODB_URL) {
+      throw new Error("MONGODB_URL is not defined in environment variables");
     }
 
-    await mongoose.connect(`${process.env.MONGODB_URI}/trendify`);
+    await mongoose.connect(process.env.MONGODB_URL);
   } catch (error) {
     console.error("❌ Error connecting to MongoDB:", error);
     process.exit(1);

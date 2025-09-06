@@ -3,16 +3,71 @@ import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
 import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
+import { toast } from "react-toastify";
 
 const PlaceOrder: React.FC = () => {
   const [method, setMethod] = useState<"stripe" | "razorpay" | "cod">("cod");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
+    mobile: ""
+  });
 
   const context = useContext(ShopContext);
   if (!context) {
     throw new Error("PlaceOrder must be used within a ShopContextProvider");
   }
 
-  const { navigate } = context;
+  const { navigate, cartItems, getCartAmount } = context;
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
+  const handlePlaceOrder = async () => {
+    // Validate form
+    const requiredFields = ['firstName', 'lastName', 'email', 'street', 'city', 'state', 'zipCode', 'country', 'mobile'];
+    const emptyFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+    
+    if (emptyFields.length > 0) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      // In a real implementation, you would call an API endpoint here
+      // const response = await orderAPI.placeOrder({
+      //   ...formData,
+      //   paymentMethod: method,
+      //   cartItems,
+      //   totalAmount: getCartAmount()
+      // });
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast.success("Order placed successfully!");
+      navigate("/orders");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      toast.error("Failed to place order. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col justify-between gap-4 pt-5 sm:flex-row sm:pt-14 min-h-[80vh] border-t">
@@ -27,11 +82,19 @@ const PlaceOrder: React.FC = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded"
             type="text"
             placeholder="First Name"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            required
           />
           <input
             className="w-full px-4 py-2 border border-gray-300 rounded"
             type="text"
             placeholder="Last Name"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleInputChange}
+            required
           />
         </div>
 
@@ -39,11 +102,19 @@ const PlaceOrder: React.FC = () => {
           className="w-full px-4 py-2 border border-gray-300 rounded"
           type="email"
           placeholder="Email Address"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          required
         />
         <input
           className="w-full px-4 py-2 border border-gray-300 rounded"
           type="text"
           placeholder="Street"
+          name="street"
+          value={formData.street}
+          onChange={handleInputChange}
+          required
         />
 
         <div className="flex gap-3">
@@ -51,11 +122,19 @@ const PlaceOrder: React.FC = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded"
             type="text"
             placeholder="City"
+            name="city"
+            value={formData.city}
+            onChange={handleInputChange}
+            required
           />
           <input
             className="w-full px-4 py-2 border border-gray-300 rounded"
             type="text"
             placeholder="State"
+            name="state"
+            value={formData.state}
+            onChange={handleInputChange}
+            required
           />
         </div>
 
@@ -64,11 +143,19 @@ const PlaceOrder: React.FC = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded"
             type="number"
             placeholder="Zip Code"
+            name="zipCode"
+            value={formData.zipCode}
+            onChange={handleInputChange}
+            required
           />
           <input
             className="w-full px-4 py-2 border border-gray-300 rounded"
             type="text"
             placeholder="Country"
+            name="country"
+            value={formData.country}
+            onChange={handleInputChange}
+            required
           />
         </div>
 
@@ -76,6 +163,10 @@ const PlaceOrder: React.FC = () => {
           className="w-full px-4 py-2 border border-gray-300 rounded"
           type="number"
           placeholder="Mobile"
+          name="mobile"
+          value={formData.mobile}
+          onChange={handleInputChange}
+          required
         />
       </div>
 
@@ -138,10 +229,11 @@ const PlaceOrder: React.FC = () => {
 
           <div className="w-full mt-8 text-end">
             <button
-              onClick={() => navigate("/orders")}
-              className="px-16 py-3 text-sm text-white bg-black active:bg-gray-800"
+              onClick={handlePlaceOrder}
+              className="px-16 py-3 text-sm text-white bg-black active:bg-gray-800 disabled:bg-gray-400"
+              disabled={loading}
             >
-              PLACE ORDER
+              {loading ? "PROCESSING..." : "PLACE ORDER"}
             </button>
           </div>
         </div>

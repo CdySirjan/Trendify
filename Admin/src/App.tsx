@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -8,16 +8,28 @@ import Orders from "./pages/Orders";
 import Login from "./components/Login";
 
 const App: React.FC = () => {
-  // ✅ For frontend-only demo, we’ll just manage login state
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  
+  useEffect(() => {
+    // Check if user is already logged in
+    const token = localStorage.getItem('admin-token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100">
       {!isLoggedIn ? (
-        <Login setToken={() => setIsLoggedIn(true)} />
+        <Login setToken={(token) => {
+          if (token) setIsLoggedIn(true);
+        }} />
       ) : (
         <>
-          <Navbar setToken={() => setIsLoggedIn(false)} />
+          <Navbar setToken={() => {
+            localStorage.removeItem('admin-token');
+            setIsLoggedIn(false);
+          }} />
           <hr />
           <div className="flex w-full">
             <Sidebar />

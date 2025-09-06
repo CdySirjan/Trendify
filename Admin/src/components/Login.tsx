@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { FormEvent } from "react";
 import { assets } from "../assets/assets";
+import { adminAPI } from "../services/api";
 import "../index.css";
 
 interface LoginProps {
@@ -11,11 +12,25 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const onSubmitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
-    setToken("dummy-token");
+    setError("");
+    setLoading(true);
+    
+    try {
+      const response = await adminAPI.login(email, password);
+      const { token } = response.data;
+      localStorage.setItem("admin-token", token);
+      setToken(token);
+    } catch (err) {
+      console.error("Login failed:", err);
+      setError("Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,11 +63,15 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
               required
             />
           </div>
+          {error && (
+            <p className="mt-2 text-sm text-red-600">{error}</p>
+          )}
           <button
-            className="w-full px-4 py-2 mt-5 text-white bg-black rounded-md"
+            className="w-full px-4 py-2 mt-5 text-white bg-black rounded-md disabled:bg-gray-400"
             type="submit"
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>
