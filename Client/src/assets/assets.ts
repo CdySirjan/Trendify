@@ -69,6 +69,7 @@ import menu_icon from './menu_icon.png';
 import about_img from './about_img.png';
 import contact_img from './contact_img.png';
 import esewa_logo from './esewa_logo.svg';
+import esewa_payment from './esewa_payment.svg';
 import cross_icon from './cross_icon.png';
 // TypeScript types
 export interface AssetMap {
@@ -104,6 +105,7 @@ export const assets: AssetMap = {
   about_img,
   contact_img,
   esewa_logo,
+  esewa_payment,
   cross_icon,
 };
 export const products = [

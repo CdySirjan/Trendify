@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { assets } from '../assets/assets';
 
 interface ESewaPaymentProps {
   amount: number;
@@ -64,14 +65,23 @@ const ESewaPayment: React.FC<ESewaPaymentProps> = ({
   };
 
   return (
-    <button 
-      onClick={initiateESewaPayment}
-      className="esewa-payment-button px-16 py-3 text-sm"
-      type="button"
-      disabled={isLoading}
-    >
-      {isLoading ? 'Processing...' : 'Pay with eSewa'}
-    </button>
+    <div className="flex flex-col items-center">
+      <img 
+        src={assets.esewa_payment} 
+        alt="eSewa Payment" 
+        className="mb-4 w-80 h-auto cursor-pointer hover:opacity-90 transition-opacity"
+        onClick={initiateESewaPayment}
+        style={{ maxWidth: '100%' }}
+      />
+      <button 
+        onClick={initiateESewaPayment}
+        className="esewa-payment-button px-16 py-3 text-sm text-white bg-green-600 hover:bg-green-700 rounded-md"
+        type="button"
+        disabled={isLoading}
+      >
+        {isLoading ? 'Processing...' : 'Pay with eSewa'}
+      </button>
+    </div>
   );
 };
 

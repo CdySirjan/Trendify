@@ -4,6 +4,7 @@ import { assets } from "../assets/assets";
 import CartTotal from "../components/CartTotal";
 import { ShopContext } from "../context/ShopContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface CartItem {
   _id: string;
@@ -11,7 +12,11 @@ interface CartItem {
   quantity: number;
 }
 
-const Cart: React.FC = () => {
+interface CartProps {
+  isLoggedIn: boolean;
+}
+
+const Cart: React.FC<CartProps> = ({ isLoggedIn }) => {
   const shopContext = useContext(ShopContext);
   if (!shopContext) throw new Error("Cart must be used within a ShopContextProvider");
   
@@ -97,7 +102,15 @@ const Cart: React.FC = () => {
           <CartTotal />
           <div className="w-full text-end">
             <button
-              onClick={() => !isCartEmpty && navigate("/place-order")}
+              onClick={() => {
+                if (isCartEmpty) return;
+                if (!isLoggedIn) {
+                  toast.info("Please login to proceed with checkout");
+                  navigate("/login");
+                  return;
+                }
+                navigate("/place-order");
+              }}
               className={`px-8 py-3 my-8 text-sm text-white bg-black active:bg-gray-700 ${
                 isCartEmpty ? "opacity-50 cursor-not-allowed" : ""
               }`}

@@ -129,3 +129,27 @@ export const loginAdmin = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ============================
+// Get User Profile
+// ============================
+export const getUserProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId;
+    
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+    
+    const user = await User.findById(userId).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    
+    res.status(200).json({ success: true, user });
+  } catch (error: any) {
+    console.error("Error while getting user profile:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

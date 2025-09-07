@@ -6,6 +6,7 @@ declare global {
       files?: {
         [fieldname: string]: Express.Multer.File[];
       };
+      userId?: string;
     }
   }
 }

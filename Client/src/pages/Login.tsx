@@ -18,11 +18,40 @@ const Login: React.FC = () => {
     
     try {
       if (currentState === "Login") {
+        // Validate email and password before sending request
+        if (!email.trim()) {
+          setError("Email is required");
+          setLoading(false);
+          return;
+        }
+        if (!password) {
+          setError("Password is required");
+          setLoading(false);
+          return;
+        }
+
         const response = await userAPI.login(email, password);
         const { token } = response.data;
         localStorage.setItem("token", token);
         navigate("/");
       } else {
+        // Validate registration fields
+        if (!name.trim()) {
+          setError("Name is required");
+          setLoading(false);
+          return;
+        }
+        if (!email.trim()) {
+          setError("Email is required");
+          setLoading(false);
+          return;
+        }
+        if (password.length < 8) {
+          setError("Password must be at least 8 characters");
+          setLoading(false);
+          return;
+        }
+
         const response = await userAPI.register(name, email, password);
         const { token } = response.data;
         localStorage.setItem("token", token);
@@ -30,7 +59,11 @@ const Login: React.FC = () => {
       }
     } catch (err) {
       console.error("Authentication failed:", err);
-      setError(currentState === "Login" ? "Invalid email or password" : "Registration failed");
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError(currentState === "Login" ? "Invalid email or password" : "Registration failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -110,8 +143,8 @@ const Login: React.FC = () => {
         disabled={loading}
       >
         {loading 
-          ? (currentState === "Login" ? "Signing In..." : "Signing Up...") 
-          : (currentState === "Login" ? "Sign In" : "Sign Up")
+          ? (currentState === "Login" ? "Logging in..." : "Signing Up...") 
+          : (currentState === "Login" ? "Login" : "Sign Up")
         }
       </button>
     </form>

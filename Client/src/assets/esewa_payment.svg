@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150">
+  <rect width="300" height="150" rx="10" fill="#60BB46"/>
+  <text x="150" y="60" font-family="Arial" font-size="24" font-weight="bold" fill="white" text-anchor="middle">eSewa Payment</text>
+  <text x="150" y="90" font-family="Arial" font-size="16" fill="white" text-anchor="middle">Fast, Secure, Reliable</text>
+  <rect x="75" y="100" width="150" height="30" rx="5" fill="white"/>
+  <text x="150" y="122" font-family="Arial" font-size="16" fill="#60BB46" text-anchor="middle">Pay Now</text>
+</svg>

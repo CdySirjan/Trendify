@@ -14,10 +14,6 @@ const PlaceOrder: React.FC = () => {
     lastName: "",
     email: "",
     street: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    country: "",
     mobile: ""
   });
 
@@ -38,7 +34,7 @@ const PlaceOrder: React.FC = () => {
   
   const handlePlaceOrder = async () => {
     // Validate form
-    const requiredFields = ['firstName', 'lastName', 'email', 'street', 'city', 'state', 'zipCode', 'country', 'mobile'];
+    const requiredFields = ['firstName', 'lastName', 'email', 'street', 'mobile'];
     const emptyFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
     if (emptyFields.length > 0) {
@@ -118,47 +114,7 @@ const PlaceOrder: React.FC = () => {
           required
         />
 
-        <div className="flex gap-3">
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded"
-            type="text"
-            placeholder="City"
-            name="city"
-            value={formData.city}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded"
-            type="text"
-            placeholder="State"
-            name="state"
-            value={formData.state}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
 
-        <div className="flex gap-3">
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded"
-            type="number"
-            placeholder="Zip Code"
-            name="zipCode"
-            value={formData.zipCode}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded"
-            type="text"
-            placeholder="Country"
-            name="country"
-            value={formData.country}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
 
         <input
           className="w-full px-4 py-2 border border-gray-300 rounded"

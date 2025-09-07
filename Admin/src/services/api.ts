@@ -25,8 +25,8 @@ api.interceptors.request.use(
 
 // API endpoints
 export const adminAPI = {
-  login: (email: string, password: string) => api.post('/admin/login', { email, password }),
-  getProfile: () => api.get('/admin/profile'),
+  login: (email: string, password: string) => api.post('/user/admin', { email, password }),
+  getProfile: () => api.get('/user/profile'),
 };
 
 export const productAPI = {

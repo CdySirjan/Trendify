@@ -7,6 +7,8 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Add timeout to prevent hanging requests
+  timeout: 10000,
 });
 
 // Add a request interceptor
@@ -19,6 +21,22 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Handle network errors
+    if (!error.response) {
+      console.error('Network error:', error);
+      return Promise.reject(new Error('Network error. Please check your connection.'));
+    }
     return Promise.reject(error);
   }
 );
